@@ -2,7 +2,7 @@
 Author: Yuhao_Wu
 Date: 2022-08-03 18:28:36
 LastEditors: Yuhao_Wu
-LastEditTime: 2022-08-04 00:12:55
+LastEditTime: 2022-08-04 01:32:36
 Description: A runnable script contains all data process and user-based CF functions
 '''
 
@@ -44,26 +44,28 @@ def usercf_predict(uid, iid, ratings_matrix, user_sim_mat):
     # print("Start predicting user <%d> rating on mov <%d>: "%(uid, iid))
     # 1. Find all similar users of this uid user
     # get non-nan corr: # drop himself & nan-simimlar user
-    nonna_sim_users = user_sim_mat[uid].drop([uid]).dropna()
+    nonna_user_simscores = user_sim_mat[uid].drop([uid]).dropna()
 
     # Similar user filtering rules: positively related users, where corr > 0
-    similar_users = nonna_sim_users.where(
-        nonna_sim_users > 0).dropna()  # series a col
-    if similar_users.empty is True:
+    users_pos_simscores = nonna_user_simscores.where(
+        nonna_user_simscores > 0).dropna(
+        )  # series a col with id indexs + sim scores
+    if users_pos_simscores.empty is True:
         # early end func
         raise Exception("user <%d> doesn't have similar users, early END..." %
                         uid)
 
     # 2. From the similar users of uid (corr > 0),
     #    filter out the similar users who have ratings on iid items
-    ids = set(ratings_matrix[iid].dropna().index) & set(similar_users.index)
-    finally_similar_users = similar_users.loc[list(ids)]  # series, a col
+    ids = set(ratings_matrix[iid].dropna().index) & set(
+        users_pos_simscores.index)
+    users_sim_rated_items = users_pos_simscores.loc[list(ids)]  # series, a col
 
     # 3. Combining the similarity of uid users and their similar users,
     #   predicting the ratings of iid items by uid users - take into formula
     numerator = 0
     denominator = 0
-    for sim_uid, sim_score in finally_similar_users.iteritems():
+    for sim_uid, sim_score in users_sim_rated_items.iteritems():
         # user ratings for items
         sim_user_rated_movies = ratings_matrix.loc[sim_uid].dropna()
         # sim user ratings for this iid item
@@ -130,16 +132,13 @@ def rec_mov(user_id, k, mov_df=movie_df):
     return movies_rec
 
 
+# run this script then output an example output
 if __name__ == '__main__':
-
+    # hyper params
     k = 20
     uid = 1
-    # result = top_k_rs_result(k, uid=uid)  # list of tuple, no movie name
-    # print(result)
 
     movies_rec = rec_mov(uid, k)
-    # y = json.dumps(x)
-    # pprint(f'top {k} movies to recmmond to user <{user_id}>:')
-    # pprint(movies_rec)
-    pprint(f'top {k} movies to recmmond:')
+
+    pprint(f'top {k} movies to recmmond to user {uid}:')
     pprint(movies_rec)
