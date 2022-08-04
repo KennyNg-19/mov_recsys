@@ -2,7 +2,7 @@
  * @Author: Yuhao_Wu
  * @Date: 2022-08-02 23:17:39
  * @LastEditors: Yuhao_Wu
- * @LastEditTime: 2022-08-04 14:38:09
+ * @LastEditTime: 2022-08-04 14:40:37
  * @Description: 
 -->
 # A System of user-based Collaborative Filtering on MovieLens-small
@@ -39,7 +39,7 @@ These MovieLens datasets will change over time, and are not appropriate for repo
 Download the dataset and unzip in the root of this directory:
 - [MovieLens-small version](https://grouplens.org/datasets/movielens/latest/)
 
-Well, **As the dataset is not larger**, for convenience, I also **uploaded it to Github**.
+Well, **As the dataset is not large**, for convenience, I also **uploaded it to Github**.
 
 ## CF Method and Evaluation
 User-based Collaborative Filtering, as a unsupervised method, does not learning any parameter using gradient descent (or any other optimization algorithm). Instead, it uses cosine similarity or Pearson correlation coefficients, which are only based on arithmetic operations.
