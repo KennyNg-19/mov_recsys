@@ -2,7 +2,7 @@
  * @Author: Yuhao_Wu
  * @Date: 2022-08-02 23:17:39
  * @LastEditors: Yuhao_Wu
- * @LastEditTime: 2022-08-04 14:40:37
+ * @LastEditTime: 2022-08-04 18:19:57
  * @Description: 
 -->
 # A System of user-based Collaborative Filtering on MovieLens-small
@@ -28,8 +28,9 @@ mov_recsys
  ┃ ┗ tags.csv
  ┣ .gitignore
  ┣ README.md
+ ┣ main.py # function for FastAPI
  ┣ requirements.txt
- ┣ test_user_cf.py # test modules
+ ┣ test_user_cf.py # test functions
  ┗ user_cf.py # main fucntion for CF recommendation
 ```
 
@@ -44,8 +45,14 @@ Well, **As the dataset is not large**, for convenience, I also **uploaded it to 
 ## CF Method and Evaluation
 User-based Collaborative Filtering, as a unsupervised method, does not learning any parameter using gradient descent (or any other optimization algorithm). Instead, it uses cosine similarity or Pearson correlation coefficients, which are only based on arithmetic operations.
 
-## Testing on system
-From the angle of software engineering, I wrote several **unit tests** on some main functions. The testing can be run by the **command** `pytest` in the main directory or use "testing" button in VScode.
+## Test on system
+From the angle of software engineering, I wrote several **unit tests** on some main functions. The testing can be run by the **command** `pytest` in the main directory or use "testing" button in VScode. The pytest library will automatically search for and run unit tests in all files.
+
+### Validate input params from API
+To valivate input on the requests, the FastAPI itself allows to declare additional information and validation for input parameters but this only works in Swagger UI which strictly constrain the input type. As for seneding a request via RESTful APIs, the FastAPI also gives a handled json response with clear error messages.
+
+SQL injection： how to avoid ? ...
+
 
 ## Demo Locally
 The demo of system output is returned JSON values from FastAPI. Given the dependencies are installed, just run 
