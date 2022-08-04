@@ -2,7 +2,7 @@
  * @Author: Yuhao_Wu
  * @Date: 2022-08-02 23:17:39
  * @LastEditors: Yuhao_Wu
- * @LastEditTime: 2022-08-04 14:17:44
+ * @LastEditTime: 2022-08-04 14:16:27
  * @Description: 
 -->
 # A System of user-based Collaborative Filtering on MovieLens-small
@@ -23,7 +23,7 @@ Please install python dependencies based on the versions in requirements.txt.
 ## Dataset
 These MovieLens datasets will change over time, and are not appropriate for reporting research results. I used the MovieLens-small: 100,000 ratings and 3,600 tag applications applied to 9,000 movies by 600 users, last updated 9/2018.
 
-Download these dataset and unzip in the root of this directory:
+Download the dataset and unzip in the root of this directory:
 - [MovieLens-small version](https://grouplens.org/datasets/movielens/latest/)
 
 Well, **As the dataset is not larger**, for convenience, I also **uploaded it to Githb**.
