@@ -1,5 +1,5 @@
 # data files: movie-lens dataset
-ml-*/
+# ml-*/
 
 # npm json
 *.json
