@@ -2,14 +2,14 @@
  * @Author: Yuhao_Wu
  * @Date: 2022-08-02 23:17:39
  * @LastEditors: Yuhao_Wu
- * @LastEditTime: 2022-08-04 13:57:30
+ * @LastEditTime: 2022-08-04 14:17:44
  * @Description: 
 -->
 # A System of user-based Collaborative Filtering on MovieLens-small
 
 ## Dependancies
 Please install python dependencies based on the versions in requirements.txt.
-- (Optional): to avoid make current conda enviroment messy, please create a new one as below:
+- (Optional): if you use **conda** to manage python virtual environments, to avoid make current conda enviroment messy, please create a new one as below:
     > conda create -n YOUR_ENV_NAME python=3.8
     >
     > conda activate YOUR_ENV_NAME
@@ -25,6 +25,8 @@ These MovieLens datasets will change over time, and are not appropriate for repo
 
 Download these dataset and unzip in the root of this directory:
 - [MovieLens-small version](https://grouplens.org/datasets/movielens/latest/)
+
+Well, **As the dataset is not larger**, for convenience, I also **uploaded it to Githb**.
 
 ## CF Method and Evaluation
 User-based Collaborative Filtering, as a unsupervised method, does not learning any parameter using gradient descent (or any other optimization algorithm). Instead, it uses cosine similarity or Pearson correlation coefficients, which are only based on arithmetic operations.
