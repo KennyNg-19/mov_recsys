@@ -2,13 +2,20 @@
  * @Author: Yuhao_Wu
  * @Date: 2022-08-02 23:17:39
  * @LastEditors: Yuhao_Wu
- * @LastEditTime: 2022-08-04 12:52:44
+ * @LastEditTime: 2022-08-04 13:57:30
  * @Description: 
 -->
 # A System of user-based Collaborative Filtering on MovieLens-small
 
 ## Dependancies
-Run the command `pip install -r requirements.txt`.
+Please install python dependencies based on the versions in requirements.txt.
+- (Optional): to avoid make current conda enviroment messy, please create a new one as below:
+    > conda create -n YOUR_ENV_NAME python=3.8
+    >
+    > conda activate YOUR_ENV_NAME
+
+- Run the command to install all dependencies
+    > pip install -r requirements.txt
 
 ## File Structure
 
@@ -26,4 +33,7 @@ User-based Collaborative Filtering, as a unsupervised method, does not learning 
 From the angle of software engineering, I wrote several unit tests on some functions. The testing can be run by the **command** `pytest` in the main directory or use "testing" button in VScode.
 
 ## Demo Locally
-The demo of system output is returned JSON values from FastAPI. Given the dependencies are installed, just run `uvicorn main:app --reload` in command line and turn to the Swagger UI interactive page http://127.0.0.1:8000/docs of FastAPI.
+The demo of system output is returned JSON values from FastAPI. Given the dependencies are installed, just run 
+> uvicorn main:app --reload
+
+in command line and turn to the Swagger UI interactive page http://127.0.0.1:8000/docs of FastAPI.
