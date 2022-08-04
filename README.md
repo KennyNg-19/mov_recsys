@@ -2,7 +2,7 @@
  * @Author: Yuhao_Wu
  * @Date: 2022-08-02 23:17:39
  * @LastEditors: Yuhao_Wu
- * @LastEditTime: 2022-08-03 23:24:30
+ * @LastEditTime: 2022-08-04 11:52:35
  * @Description: 
 -->
 # A System of user-based Collaborative Filtering on MovieLens-small
@@ -14,6 +14,7 @@ Install
 ## Dataset
 
 ## CF Method and Evaluation
+User-based Collaborative Filtering, as a unsupervised method, does not learning any parameter using gradient descent (or any other optimization algorithm). Instead, it uses cosine similarity or Pearson correlation coefficients, which are only based on arithmetic operations.
 
 ## Testing on system
 
