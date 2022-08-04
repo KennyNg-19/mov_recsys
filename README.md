@@ -2,7 +2,7 @@
  * @Author: Yuhao_Wu
  * @Date: 2022-08-02 23:17:39
  * @LastEditors: Yuhao_Wu
- * @LastEditTime: 2022-08-04 18:19:57
+ * @LastEditTime: 2022-08-04 18:30:34
  * @Description: 
 -->
 # A System of user-based Collaborative Filtering on MovieLens-small
@@ -49,7 +49,7 @@ User-based Collaborative Filtering, as a unsupervised method, does not learning 
 From the angle of software engineering, I wrote several **unit tests** on some main functions. The testing can be run by the **command** `pytest` in the main directory or use "testing" button in VScode. The pytest library will automatically search for and run unit tests in all files.
 
 ### Validate input params from API
-To valivate input on the requests, the FastAPI itself allows to declare additional information and validation for input parameters but this only works in Swagger UI which strictly constrain the input type. As for seneding a request via RESTful APIs, the FastAPI also gives a handled json response with clear error messages.
+To valivate input on the requests, the FastAPI itself allows to declare additional information and validation for input parameters but this only works in Swagger UI which strictly constrain the input type. As for seneding a request via RESTful APIs, the FastAPI also gives a handled json response with clear error messages where it indeed handles type Exception **before** I wrote code to handle.
 
 SQL injection： how to avoid ? ...
 
