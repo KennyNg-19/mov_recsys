@@ -2,22 +2,26 @@
 Author: Yuhao_Wu
 Date: 2022-08-03 18:28:36
 LastEditors: Yuhao_Wu
-LastEditTime: 2022-08-04 00:12:55
-Description: A runnable script contains all data process and user-based CF functions
+LastEditTime: 2022-08-04 14:04:46
+Description: A runnable script contains all data processing and user-based CF functions
 '''
 
 import numpy as np
 import pandas as pd
+
 from pprint import pprint
 
+##############################################
+# Read data
+##############################################
 rating_path = "ml-latest-small/ratings.csv"
 dtype = {"userId": np.int32, "movieId": np.int32, "rating": np.float32}
 # load the data, we only use the first three columns of data,
 # which are the user ID, the movie ID, and the corresponding rating of the movie by that user
 rating_df = pd.read_csv(rating_path, dtype=dtype, usecols=range(3))
-
 movie_path = "ml-latest-small/movies.csv"
 movie_df = pd.read_csv(movie_path)
+
 
 # Pivot table, converting movie IDs to column names, into a User-Movie rating matrix in DF
 ratings_matrix = rating_df.pivot_table(index=["userId"],
@@ -30,6 +34,10 @@ print(f'Reading data, ml-latest-small:\nno. user: {n_u}\nno. mov: {n_mov}')
 # transpose: then,  each col is ONE user's ratings to ALl movies
 # corr(): Compute pairwise Pearson correlation of COLUMNs, excluding NA/null
 user_sim_mat = ratings_matrix.T.corr()  # (n_u, n_u)
+
+##############################################
+# user_cf related functions
+##############################################
 
 
 def usercf_predict(uid, iid, ratings_matrix, user_sim_mat):
@@ -44,26 +52,42 @@ def usercf_predict(uid, iid, ratings_matrix, user_sim_mat):
     # print("Start predicting user <%d> rating on mov <%d>: "%(uid, iid))
     # 1. Find all similar users of this uid user
     # get non-nan corr: # drop himself & nan-simimlar user
-    nonna_sim_users = user_sim_mat[uid].drop([uid]).dropna()
+    nonna_user_simscores = user_sim_mat[uid].drop([uid]).dropna()
 
     # Similar user filtering rules: positively related users, where corr > 0
-    similar_users = nonna_sim_users.where(
-        nonna_sim_users > 0).dropna()  # series a col
-    if similar_users.empty is True:
+    # users_pos_simscores: a series, a col with id indexs + sim scores
+    users_pos_simscores = nonna_user_simscores.where(
+        nonna_user_simscores > 0).dropna()
+    if users_pos_simscores.empty is True:
         # early end func
         raise Exception("user <%d> doesn't have similar users, early END..." %
                         uid)
 
     # 2. From the similar users of uid (corr > 0),
     #    filter out the similar users who have ratings on iid items
-    ids = set(ratings_matrix[iid].dropna().index) & set(similar_users.index)
-    finally_similar_users = similar_users.loc[list(ids)]  # series, a col
+    ids = set(ratings_matrix[iid].dropna().index) & set(
+        users_pos_simscores.index)
+    users_sim_rated_items = users_pos_simscores.loc[list(ids)]  # series, a col
 
+    # 3. Combining the similarity of uid users and their similar users,
+    #   predicting the ratings of iid items by uid users - take into formula
+
+    # when "No similarity", throw DivisionByZeroException, catched by called function
+    predict_rating = predict_item_score(iid, ratings_matrix,
+                                        users_sim_rated_items)
+
+    # print("Predict users <%d> rating on the movie <%d>：%0.2f" % (uid, iid, predict_rating))
+    return round(predict_rating, 2)
+
+
+# helper function for predicting rating score on item, iid
+def predict_item_score(iid, ratings_matrix: pd.DataFrame,
+                       users_sim_rated_items: pd.core.series.Series) -> float:
     # 3. Combining the similarity of uid users and their similar users,
     #   predicting the ratings of iid items by uid users - take into formula
     numerator = 0
     denominator = 0
-    for sim_uid, sim_score in finally_similar_users.iteritems():
+    for sim_uid, sim_score in users_sim_rated_items.iteritems():
         # user ratings for items
         sim_user_rated_movies = ratings_matrix.loc[sim_uid].dropna()
         # sim user ratings for this iid item
@@ -73,15 +97,8 @@ def usercf_predict(uid, iid, ratings_matrix, user_sim_mat):
         denominator += sim_score
 
     # Calculate the predicted score value and return
-    # try:
-    ## may throw Exception, catched by called function
-    predict_rating = numerator / denominator
-    # except ZeroDivisionError as e:
-    #     print(e)
-    #     raise Exception("No similarity")
-
-    # print("Predict users <%d> rating on the movie <%d>：%0.2f" % (uid, iid, predict_rating))
-    return round(predict_rating, 3)
+    # may throw Exception, catched by called function
+    return numerator / denominator
 
 
 # Predict all movie ratings for a particular user
@@ -109,7 +126,8 @@ def usercf_predict_all_mov(uid, ratings_matrix, user_similar):
             yield uid, iid, rating
 
 
-def top_k_rs_result(k, uid):
+def top_k_rs_result(k, uid, ratings_matrix=ratings_matrix,
+                    user_sim_mat=user_sim_mat):
     results = usercf_predict_all_mov(uid, ratings_matrix, user_sim_mat)
     return sorted(results, key=lambda x: x[2], reverse=True)[:k]
 
@@ -119,6 +137,7 @@ def get_mov_by_id(mov_id, mov_df=movie_df):
                       'title'].iloc[0]  # just 1 cell
 
 
+# ALL in one: the mainly called function for predict rating scores
 def rec_mov(user_id, k, mov_df=movie_df):
     result = top_k_rs_result(k, user_id)
     movies_rec = [{
@@ -130,16 +149,13 @@ def rec_mov(user_id, k, mov_df=movie_df):
     return movies_rec
 
 
+# TODO run this script then output an example output
 if __name__ == '__main__':
-
-    k = 20
-    uid = 1
-    # result = top_k_rs_result(k, uid=uid)  # list of tuple, no movie name
-    # print(result)
+    # hyper params
+    k = 10
+    uid = 3
 
     movies_rec = rec_mov(uid, k)
-    # y = json.dumps(x)
-    # pprint(f'top {k} movies to recmmond to user <{user_id}>:')
-    # pprint(movies_rec)
-    pprint(f'top {k} movies to recmmond:')
+
+    print(f'top {k} movies to recmmond to user {uid}:')
     pprint(movies_rec)

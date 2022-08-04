@@ -1,0 +1,6 @@
+numpy
+pandas
+pytest
+fastapi
+uvicorn # offically, it should be "uvicorn[standard]", but str is not supported
+scikit-learn
